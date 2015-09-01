@@ -1,0 +1,82 @@
+<?php
+/**
+ * @file
+ * Main hook implementations.
+ */
+
+/**
+ * Implements hook_menu().
+ */
+function islandora_gsearcher_menu() {
+  return array(
+    'admin/islandora/tools/gsearcher' => array(
+      'title' => 'GSearcher',
+      'description' => 'Configure GSearch activities.',
+      'page callback' => 'drupal_get_form',
+      'page arguments' => array('islandora_gsearcher_settings_form'),
+      'access arguments' => array('administer site configuration'),
+      'file' => 'includes/admin.form.inc',
+      'type' => MENU_NORMAL_ITEM,
+    ),
+  );
+}
+
+/**
+ * Implements hook_islandora_object_modified().
+ *
+ * Register the change for sending to GSearch.
+ */
+function islandora_gsearcher_islandora_object_modified(AbstractObject $object) {
+  module_load_include('inc', 'islandora_gsearcher', 'includes/utilities');
+  islandora_gsearcher_inform_gsearch($object->id);
+}
+
+/**
+ * Implements hook_islandora_object_ingested().
+ *
+ * Register the change for sending to GSearch.
+ */
+function islandora_gsearcher_islandora_object_ingested(AbstractObject $object) {
+  module_load_include('inc', 'islandora_gsearcher', 'includes/utilities');
+  islandora_gsearcher_inform_gsearch($object->id);
+}
+
+/**
+ * Implements hook_islandora_object_purged().
+ *
+ * Register the change for sending to GSearch.
+ */
+function islandora_gsearcher_islandora_object_purged($pid) {
+  module_load_include('inc', 'islandora_gsearcher', 'includes/utilities');
+  islandora_gsearcher_inform_gsearch($pid);
+}
+
+/**
+ * Implements hook_islandora_datastream_ingested().
+ *
+ * Register the change for sending to GSearch.
+ */
+function islandora_gsearcher_islandora_datastream_ingested(AbstractObject $object) {
+  module_load_include('inc', 'islandora_gsearcher', 'includes/utilities');
+  islandora_gsearcher_inform_gsearch($object->id);
+}
+
+/**
+ * Implements hook_islandora_datastream_modified().
+ *
+ * Register the change for sending to GSearch.
+ */
+function islandora_gsearcher_islandora_datastream_modified(AbstractObject $object) {
+  module_load_include('inc', 'islandora_gsearcher', 'includes/utilities');
+  islandora_gsearcher_inform_gsearch($object->id);
+}
+
+/**
+ * Implements hook_islandora_datastream_purged().
+ *
+ * Register the change for sending to GSearch.
+ */
+function islandora_gsearcher_islandora_datastream_purged(AbstractObject $object) {
+  module_load_include('inc', 'islandora_gsearcher', 'includes/utilities');
+  islandora_gsearcher_inform_gsearch($object->id);
+}
