@@ -10,7 +10,7 @@
  * @param string $pid
  *   The PID to inform gsearch of.
  * @param bool $send
- *   Wether or not to send information
+ *   Whether or not to send information
  */
 function islandora_gsearcher_inform_gsearch($pid = NULL, $send = FALSE) {
   static $pids = array();
@@ -44,5 +44,7 @@ function islandora_gsearcher_inform_gsearch($pid = NULL, $send = FALSE) {
         )
       );
     }
+    // Make sure we don't talk to GSearch more than necessary.
+    $pids = array();
   }
 }
