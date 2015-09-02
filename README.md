@@ -1,8 +1,8 @@
-# MODULE NAME
+# Islandora GSearcher
 
 ## Introduction
 
-DESCRIPTION
+Sends created and edited objects to be indexed via the Fedora Generic Search Service on page exit.
 
 ## Requirements
 
