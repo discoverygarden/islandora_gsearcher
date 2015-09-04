@@ -30,7 +30,7 @@ function islandora_gsearcher_inform_gsearch($pid = NULL, $send = FALSE) {
     foreach ($pids as $pid_to_send) {
       $password = variable_get('islandora_gsearcher_gsearch_pass', 'fedoraAdmin');
       $user = variable_get('islandora_gsearcher_gsearch_user', 'fedoraAdmin');
-      $url = variable_get('islandora_gsearcher_gsearch_url', 'http://localhost:8080/fedoragsearch/rest');
+      $url = variable_get('islandora_gsearcher_gsearch_url', 'localhost:8080/fedoragsearch/rest');
       $response = drupal_http_request(
         url(
           "http://$user:$password@$url",
