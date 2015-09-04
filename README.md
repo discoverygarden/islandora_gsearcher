@@ -25,6 +25,10 @@ Current maintainers:
 
 * [discoverygarden](http://www.discoverygarden.ca)
 
+Sponsors:
+
+* [United States Department of Agriculture: National Agricultural Library](https://www.nal.usda.gov/)
+
 ## Development
 
 If you would like to contribute to this module, please check out our helpful
