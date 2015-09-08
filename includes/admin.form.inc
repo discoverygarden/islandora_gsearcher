@@ -31,3 +31,22 @@ function islandora_gsearcher_settings_form(array $form, array &$form_state) {
   );
   return system_settings_form($form);
 }
+
+/**
+ * Admin settings form validation.
+ */
+function islandora_gsearcher_settings_form_validate(array &$form, array &$form_state) {
+  $user = $form_state['values']['islandora_gsearcher_gsearch_user'];
+  $password = $form_state['values']['islandora_gsearcher_gsearch_pass'];
+  $url = $form_state['values']['islandora_gsearcher_gsearch_url'];
+  $response = drupal_http_request("http://$user:$password@$url");
+  if ($response->code == 401) {
+    form_set_error('', t('Failed to authenticate with GSearch.'));
+  }
+  elseif ($response->code != 200) {
+    form_set_error(
+      '',
+      t('GSearch did not return 200. Something may be wrong with your configuration or GSearch.')
+    );
+  }
+}

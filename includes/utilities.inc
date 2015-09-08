@@ -43,6 +43,15 @@ function islandora_gsearcher_inform_gsearch($pid = NULL, $send = FALSE) {
           )
         )
       );
+      // Ping the logs in case of failure, GSearch will know more.
+      if ($response->code != 200) {
+        watchdog(
+          'Islandora GSearcher',
+          'GSearch did not return 200 when asked to index @pid.',
+          array('@pid' => $pid_to_send),
+          WATCHDOG_ERROR
+        );
+      }
     }
     // Make sure we don't talk to GSearch more than necessary.
     $pids = array();
