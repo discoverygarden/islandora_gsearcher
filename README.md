@@ -16,7 +16,7 @@ This module requires the following modules/libraries:
 Install as usual, see [this](https://drupal.org/documentation/install/modules-themes/modules-7) for further information.
 Depending on your use case you may wish to deactivate the use of ActiveMQ.
 To do so you would:
-* remove the fedoragsearch.updaterNames property from fedoragsearch.properties
+* remove the fedoragsearch.updaterNames property from fedoragsearch.properties. Some versions of GSearch (confirmed on 2.8) have issue with this change and start white screening.
 * remove the ActiveMQ module section from fedora.fcfg
 
 ## Troubleshooting/Issues
