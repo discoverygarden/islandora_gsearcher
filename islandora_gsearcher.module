@@ -48,7 +48,7 @@ function islandora_gsearcher_islandora_object_ingested(AbstractObject $object) {
  */
 function islandora_gsearcher_islandora_object_purged($pid) {
   module_load_include('inc', 'islandora_gsearcher', 'includes/utilities');
-  islandora_gsearcher_inform_gsearch($pid);
+  islandora_gsearcher_inform_gsearch($pid, FALSE, TRUE);
 }
 
 /**
