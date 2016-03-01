@@ -29,13 +29,13 @@ function islandora_gsearcher_inform_gsearch($pid = NULL, $send = FALSE, $purge =
   if ($pid && !$purge && !in_array($pid, $update_pids)) {
     $update_pids[] = $pid;
     if (in_array($pid, $purge_pids)) {
-      unset($purge_pids[array_keys($purge_pids, $pid)]);
+      unset($purge_pids[array_search($pid, $purge_pids)]);
     }
   }
   elseif ($pid && $purge && !in_array($pid, $purge_pids)) {
     $purge_pids[] = $pid;
     if (in_array($pid, $update_pids)) {
-      unset($update_pids[array_keys($update_pids, $pid)]);
+      unset($update_pids[array_search($pid, $update_pids)]);
     }
   }
 
