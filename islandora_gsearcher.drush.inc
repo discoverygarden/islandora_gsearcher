@@ -4,7 +4,7 @@
  * Drush integration
  */
 
-require_once "includes/utilities.inc";
+require_once dirname(__FILE__) . '/includes/utilities.inc';
 
 /**
  * Implements hook_drush_exit().
