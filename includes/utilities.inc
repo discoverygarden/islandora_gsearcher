@@ -70,29 +70,32 @@ function islandora_gsearcher_speak_to_gsearch($pid, $opp) {
     $verb = 'purge';
   }
 
-  $password = variable_get('islandora_gsearcher_gsearch_pass', 'fedoraAdmin');
-  $user = variable_get('islandora_gsearcher_gsearch_user', 'fedoraAdmin');
-  $url = variable_get('islandora_gsearcher_gsearch_url', 'localhost:8080/fedoragsearch/rest');
+  $password = \Drupal::config('islandora_gsearcher.settings')->get('islandora_gsearcher_gsearch_pass');
+  $user = \Drupal::config('islandora_gsearcher.settings')->get('islandora_gsearcher_gsearch_user');
+  $url = \Drupal::config('islandora_gsearcher.settings')->get('islandora_gsearcher_gsearch_url');
 
-  $response = drupal_http_request(
-    url(
-      "http://$user:$password@$url",
-      array(
-        'query' => array(
-          'operation' => 'updateIndex',
-          'action' => $action,
-          'value' => $pid,
-        ),
-      )
-    )
-  );
+  // @FIXME
+// drupal_http_request() has been replaced by the Guzzle HTTP client, which is bundled
+// with Drupal core.
+// 
+// 
+// @see https://www.drupal.org/node/1862446
+// @see http://docs.guzzlephp.org/en/latest
+// $response = drupal_http_request(
+//     url(
+//       "http://$user:$password@$url",
+//       array(
+//         'query' => array(
+//           'operation' => 'updateIndex',
+//           'action' => $action,
+//           'value' => $pid,
+//         ),
+//       )
+//     )
+//   );
+
   // Ping the logs in case of failure, GSearch will know more.
   if ($response->code != 200) {
-    watchdog(
-      'Islandora GSearcher',
-      'GSearch did not return 200 when asked to @verb @pid.',
-      array('@verb' => $verb, '@pid' => $pid),
-      WATCHDOG_ERROR
-    );
+    \Drupal::logger('Islandora GSearcher')->error('GSearch did not return 200 when asked to @verb @pid.', array('@verb' => $verb, '@pid' => $pid));
   }
 }
