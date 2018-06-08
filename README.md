@@ -9,14 +9,14 @@ Service on page exit.
 
 This module requires the following modules/libraries:
 
-* [Islandora](https://github.com/islandora/islandora)
+* [Islandora](https://github.com/discoverygarden/islandora)
 * [Tuque](https://github.com/islandora/tuque)
 
 ## Installation
 
-Install as usual, see
-[this](https://drupal.org/documentation/install/modules-themes/modules-7) for
-further information. Depending on your use case you may wish to deactivate the
+Install as
+[usual](https://www.drupal.org/docs/8/extending-drupal-8/installing-drupal-8-modules).
+Depending on your use case you may wish to deactivate the
 use of ActiveMQ to greatly reduce server load during ingest.
 
 To do so you would:
@@ -27,8 +27,13 @@ To do so you would:
 
 ## Troubleshooting/Issues
 
-Having problems or solved a problem? Contact 
-[discoverygarden](http://support.discoverygarden.ca).
+Having problems or solved one? Create an issue, check out the Islandora Google
+groups.
+
+* [Users](https://groups.google.com/forum/?hl=en&fromgroups#!forum/islandora)
+* [Devs](https://groups.google.com/forum/?hl=en&fromgroups#!forum/islandora-dev)
+
+or contact [discoverygarden](http://support.discoverygarden.ca).
 
 ## Maintainers/Sponsors
 
@@ -36,16 +41,13 @@ Current maintainers:
 
 * [discoverygarden](http://www.discoverygarden.ca)
 
-Sponsors:
-
-* [United States Department of Agriculture: National Agricultural Library](https://www.nal.usda.gov/)
-
 ## Development
 
-If you would like to contribute to this module, please check out our helpful
-[Documentation for Developers](https://github.com/Islandora/islandora/wiki#wiki-documentation-for-developers)
-info, [Developers](http://islandora.ca/developers) section on Islandora.ca and
-contact [discoverygarden](http://support.discoverygarden.ca).
+If you would like to contribute to this module, please check out the helpful
+[Documentation](https://github.com/Islandora/islandora/wiki#wiki-documentation-for-developers),
+[Developers](http://islandora.ca/developers) section on Islandora.ca and create
+an issue, pull request and or contact
+[discoverygarden](http://support.discoverygarden.ca).
 
 ## License
 
