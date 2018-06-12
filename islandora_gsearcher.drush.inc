@@ -1,7 +1,8 @@
 <?php
+
 /**
  * @file
- * Drush integration
+ * Drush integration.
  */
 
 require_once dirname(__FILE__) . '/includes/utilities.inc';

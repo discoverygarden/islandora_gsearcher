@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * Misc helpers.
@@ -23,7 +24,7 @@ function islandora_gsearcher_inform_gsearch($pid = NULL, $send = FALSE, $purge =
 
   // Register as shutdown if necessary.
   if (!$registered) {
-    $registered_funcs = drupal_register_shutdown_function('islandora_gsearcher_inform_gsearch', NULL, TRUE);
+    drupal_register_shutdown_function('islandora_gsearcher_inform_gsearch', NULL, TRUE);
     $registered = TRUE;
   }
 
@@ -90,6 +91,6 @@ function islandora_gsearcher_speak_to_gsearch($pid, $opp) {
 
   // Ping the logs in case of failure, GSearch will know more.
   if ($response->code != 200) {
-    \Drupal::logger('Islandora GSearcher')->error('GSearch did not return 200 when asked to @verb @pid.', array('@verb' => $verb, '@pid' => $pid));
+    \Drupal::logger('Islandora GSearcher')->error('GSearch did not return 200 when asked to @verb @pid.', ['@verb' => $verb, '@pid' => $pid]);
   }
 }

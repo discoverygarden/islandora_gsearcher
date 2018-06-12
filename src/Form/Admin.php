@@ -1,15 +1,13 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\islandora_gsearcher\Form\IslandoraGsearcherSettingsForm.
- */
-
 namespace Drupal\islandora_gsearcher\Form;
 
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
 
+/**
+ * Module settings form.
+ */
 class Admin extends ConfigFormBase {
 
   /**
@@ -75,19 +73,19 @@ class Admin extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
-  public function validateForm(array &$form, \Drupal\Core\Form\FormStateInterface $form_state) {
+  public function validateForm(array &$form, FormStateInterface $form_state) {
     $user = $form_state->getValue('islandora_gsearcher_gsearch_user');
     $password = $form_state->getValue('islandora_gsearcher_gsearch_pass');
     $url = $form_state->getValue('islandora_gsearcher_gsearch_url');
 
-    $client = \Drupal::httpClient();
+    $client = httpClient();
     $response = $client->request('GET', "http://$user:$password@$url");
 
     if ($response->getStatusCode() == 401) {
-      $form_state->setErrorByName('', t('Failed to authenticate with GSearch.'));
+      $form_state->setErrorByName('', $this->t('Failed to authenticate with GSearch.'));
     }
     elseif ($response->getStatusCode() != 200) {
-      $form_state->setErrorByName('', t('GSearch did not return 200. Something may be wrong with your configuration or GSearch.'));
+      $form_state->setErrorByName('', $this->t('GSearch did not return 200. Something may be wrong with your configuration or GSearch.'));
     }
   }
 
