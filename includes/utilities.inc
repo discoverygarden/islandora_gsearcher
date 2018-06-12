@@ -4,6 +4,8 @@
  * Misc helpers.
  */
 
+use Drupal\Core\Url;
+
 /**
  * Inform GSearch about changes to or the creation of an object.
  *
@@ -15,8 +17,8 @@
  *   Whether or not to purge the PID from the index.
  */
 function islandora_gsearcher_inform_gsearch($pid = NULL, $send = FALSE, $purge = FALSE) {
-  static $update_pids = array();
-  static $purge_pids = array();
+  static $update_pids = [];
+  static $purge_pids = [];
   static $registered = FALSE;
 
   // Register as shutdown if necessary.
@@ -47,8 +49,8 @@ function islandora_gsearcher_inform_gsearch($pid = NULL, $send = FALSE, $purge =
       islandora_gsearcher_speak_to_gsearch($pid_to_send, 'purge');
     }
     // Make sure we don't talk to GSearch more than necessary.
-    $update_pids = array();
-    $purge_pids = array();
+    $update_pids = [];
+    $purge_pids = [];
   }
 }
 
@@ -61,6 +63,7 @@ function islandora_gsearcher_inform_gsearch($pid = NULL, $send = FALSE, $purge =
  *   The operation to do.
  */
 function islandora_gsearcher_speak_to_gsearch($pid, $opp) {
+  $config = \Drupal::config('islandora_gsearcher.settings');
   if ($opp == 'index') {
     $action = 'fromPid';
     $verb = 'index';
@@ -70,29 +73,20 @@ function islandora_gsearcher_speak_to_gsearch($pid, $opp) {
     $verb = 'purge';
   }
 
-  $password = \Drupal::config('islandora_gsearcher.settings')->get('islandora_gsearcher_gsearch_pass');
-  $user = \Drupal::config('islandora_gsearcher.settings')->get('islandora_gsearcher_gsearch_user');
-  $url = \Drupal::config('islandora_gsearcher.settings')->get('islandora_gsearcher_gsearch_url');
+  $password = $config->get('islandora_gsearcher_gsearch_pass');
+  $user = $config->get('islandora_gsearcher_gsearch_user');
+  $url = $config->get('islandora_gsearcher_gsearch_url');
 
-  // @FIXME
-// drupal_http_request() has been replaced by the Guzzle HTTP client, which is bundled
-// with Drupal core.
-// 
-// 
-// @see https://www.drupal.org/node/1862446
-// @see http://docs.guzzlephp.org/en/latest
-// $response = drupal_http_request(
-//     url(
-//       "http://$user:$password@$url",
-//       array(
-//         'query' => array(
-//           'operation' => 'updateIndex',
-//           'action' => $action,
-//           'value' => $pid,
-//         ),
-//       )
-//     )
-//   );
+  $client = \Drupal::httpClient();
+  $url_params = [
+    'query' => [
+      'operation' => 'updateIndex',
+      'action' => $action,
+      'value' => $pid,
+    ],
+  ];
+  $url = Url::fromUri("http://$user:$password@$url", $url_params);
+  $response = $client->request('GET', $url->toString());
 
   // Ping the logs in case of failure, GSearch will know more.
   if ($response->code != 200) {

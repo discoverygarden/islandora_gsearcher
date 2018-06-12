@@ -1,2 +1,3 @@
-
-
+islandora_gsearcher_gsearch_url: 'localhost:8080/fedoragsearch/rest'
+islandora_gsearcher_gsearch_user: 'fedoraAdmin'
+islandora_gsearcher_gsearch_pass: 'fedoraAdmin'
