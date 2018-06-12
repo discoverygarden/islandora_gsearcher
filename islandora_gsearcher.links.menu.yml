@@ -1,0 +1,5 @@
+islandora_gsearcher.admin:
+  route_name: islandora_gsearcher.admin
+  parent: islandora.tools_admin
+  title: 'GSearcher'
+  description: 'Configure GSearch activities.'

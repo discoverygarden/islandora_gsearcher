@@ -1,6 +1,0 @@
-name = Islandora GSearcher
-description = Sends created and edited objects to be indexed via the Fedora Generic Search Service on page exit.
-version = 7.x-dev
-core = 7.x
-configure = admin/islandora/tools/gsearcher
-dependencies[] = islandora
