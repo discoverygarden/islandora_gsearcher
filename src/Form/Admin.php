@@ -6,7 +6,7 @@ use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
 use GuzzleHttp\ClientInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use GuzzleHttp\Exception\RequestException;
+use GuzzleHttp\Exception\GuzzleException;
 
 /**
  * Module settings form.
@@ -103,9 +103,12 @@ class Admin extends ConfigFormBase {
 
     $client = $this->httpClient;
     try {
-      $client->request('GET', "http://$user:$password@$url");
+      $response = $client->request('GET', "http://$user:$password@$url");
+      if ($response->getStatusCode() != 200) {
+        $form_state->setErrorByName('', $this->t('GSearch did not return 200. Something may be wrong with your configuration or GSearch.'));
+      }
     }
-    catch (RequestException $exception) {
+    catch (GuzzleException $exception) {
       $status_code = $exception->getResponse()->getStatusCode();
       if ($status_code == 401) {
         $form_state->setErrorByName('', $this->t('Failed to authenticate with GSearch.'));
