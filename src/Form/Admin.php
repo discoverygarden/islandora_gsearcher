@@ -4,11 +4,34 @@ namespace Drupal\islandora_gsearcher\Form;
 
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
+use GuzzleHttp\ClientInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+use GuzzleHttp\Exception\RequestException;
 
 /**
  * Module settings form.
  */
 class Admin extends ConfigFormBase {
+
+  protected $httpClient;
+
+  /**
+   * Class constructor.
+   */
+  public function __construct(ClientInterface $http_client) {
+    $this->httpClient = $http_client;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container) {
+    // Instantiates this form class.
+    return new static(
+    // Load the service required to construct this class.
+      $container->get('http_client')
+    );
+  }
 
   /**
    * {@inheritdoc}
@@ -78,14 +101,18 @@ class Admin extends ConfigFormBase {
     $password = $form_state->getValue('islandora_gsearcher_gsearch_pass');
     $url = $form_state->getValue('islandora_gsearcher_gsearch_url');
 
-    $client = httpClient();
-    $response = $client->request('GET', "http://$user:$password@$url");
-
-    if ($response->getStatusCode() == 401) {
-      $form_state->setErrorByName('', $this->t('Failed to authenticate with GSearch.'));
+    $client = $this->httpClient;
+    try {
+      $client->request('GET', "http://$user:$password@$url");
     }
-    elseif ($response->getStatusCode() != 200) {
-      $form_state->setErrorByName('', $this->t('GSearch did not return 200. Something may be wrong with your configuration or GSearch.'));
+    catch (RequestException $exception) {
+      $status_code = $exception->getResponse()->getStatusCode();
+      if ($status_code == 401) {
+        $form_state->setErrorByName('', $this->t('Failed to authenticate with GSearch.'));
+      }
+      elseif ($status_code != 200) {
+        $form_state->setErrorByName('', $this->t('GSearch did not return 200. Something may be wrong with your configuration or GSearch.'));
+      }
     }
   }
 
