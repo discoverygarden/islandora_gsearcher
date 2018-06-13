@@ -6,6 +6,7 @@
  */
 
 use Drupal\Core\Url;
+use GuzzleHttp\Exception\RequestException;
 
 /**
  * Inform GSearch about changes to or the creation of an object.
@@ -87,10 +88,13 @@ function islandora_gsearcher_speak_to_gsearch($pid, $opp) {
     ],
   ];
   $url = Url::fromUri("http://$user:$password@$url", $url_params);
-  $response = $client->request('GET', $url->toString());
-
-  // Ping the logs in case of failure, GSearch will know more.
-  if ($response->code != 200) {
-    \Drupal::logger('Islandora GSearcher')->error('GSearch did not return 200 when asked to @verb @pid.', ['@verb' => $verb, '@pid' => $pid]);
+  try {
+    $client->request('GET', $url->toString());
+  }
+  catch (RequestException $exception) {
+    // Ping the logs in case of failure, GSearch will know more.
+    if ($exception->getResponse()->getStatusCode() != 200) {
+      \Drupal::logger('Islandora GSearcher')->error('GSearch did not return 200 when asked to @verb @pid.', ['@verb' => $verb, '@pid' => $pid]);
+    }
   }
 }
