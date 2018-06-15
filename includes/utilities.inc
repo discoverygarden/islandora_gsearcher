@@ -1,8 +1,12 @@
 <?php
+
 /**
  * @file
  * Misc helpers.
  */
+
+use Drupal\Core\Url;
+use GuzzleHttp\Exception\GuzzleException;
 
 /**
  * Inform GSearch about changes to or the creation of an object.
@@ -15,13 +19,13 @@
  *   Whether or not to purge the PID from the index.
  */
 function islandora_gsearcher_inform_gsearch($pid = NULL, $send = FALSE, $purge = FALSE) {
-  static $update_pids = array();
-  static $purge_pids = array();
+  static $update_pids = [];
+  static $purge_pids = [];
   static $registered = FALSE;
 
   // Register as shutdown if necessary.
   if (!$registered) {
-    $registered_funcs = drupal_register_shutdown_function('islandora_gsearcher_inform_gsearch', NULL, TRUE);
+    drupal_register_shutdown_function('islandora_gsearcher_inform_gsearch', NULL, TRUE);
     $registered = TRUE;
   }
 
@@ -47,8 +51,8 @@ function islandora_gsearcher_inform_gsearch($pid = NULL, $send = FALSE, $purge =
       islandora_gsearcher_speak_to_gsearch($pid_to_send, 'purge');
     }
     // Make sure we don't talk to GSearch more than necessary.
-    $update_pids = array();
-    $purge_pids = array();
+    $update_pids = [];
+    $purge_pids = [];
   }
 }
 
@@ -61,6 +65,7 @@ function islandora_gsearcher_inform_gsearch($pid = NULL, $send = FALSE, $purge =
  *   The operation to do.
  */
 function islandora_gsearcher_speak_to_gsearch($pid, $opp) {
+  $config = \Drupal::config('islandora_gsearcher.settings');
   if ($opp == 'index') {
     $action = 'fromPid';
     $verb = 'index';
@@ -70,29 +75,30 @@ function islandora_gsearcher_speak_to_gsearch($pid, $opp) {
     $verb = 'purge';
   }
 
-  $password = variable_get('islandora_gsearcher_gsearch_pass', 'fedoraAdmin');
-  $user = variable_get('islandora_gsearcher_gsearch_user', 'fedoraAdmin');
-  $url = variable_get('islandora_gsearcher_gsearch_url', 'localhost:8080/fedoragsearch/rest');
+  $password = $config->get('islandora_gsearcher_gsearch_pass');
+  $user = $config->get('islandora_gsearcher_gsearch_user');
+  $url = $config->get('islandora_gsearcher_gsearch_url');
 
-  $response = drupal_http_request(
-    url(
-      "http://$user:$password@$url",
-      array(
-        'query' => array(
-          'operation' => 'updateIndex',
-          'action' => $action,
-          'value' => $pid,
-        ),
-      )
-    )
-  );
-  // Ping the logs in case of failure, GSearch will know more.
-  if ($response->code != 200) {
-    watchdog(
-      'Islandora GSearcher',
-      'GSearch did not return 200 when asked to @verb @pid.',
-      array('@verb' => $verb, '@pid' => $pid),
-      WATCHDOG_ERROR
-    );
+  $client = \Drupal::httpClient();
+  $url_params = [
+    'query' => [
+      'operation' => 'updateIndex',
+      'action' => $action,
+      'value' => $pid,
+    ],
+  ];
+  $url = Url::fromUri("http://$user:$password@$url", $url_params);
+  try {
+    $response = $client->request('GET', $url->toString());
+    // Ping the logs in case of failure, GSearch will know more.
+    if ($response->getStatusCode() != 200) {
+      \Drupal::logger('Islandora GSearcher')->error('GSearch did not return 200 when asked to @verb @pid.', ['@verb' => $verb, '@pid' => $pid]);
+    }
+  }
+  catch (GuzzleException $exception) {
+    // Ping the logs in case of failure, GSearch will know more.
+    if ($exception->getResponse()->getStatusCode() != 200) {
+      \Drupal::logger('Islandora GSearcher')->error('GSearch did not return 200 when asked to @verb @pid.', ['@verb' => $verb, '@pid' => $pid]);
+    }
   }
 }

@@ -1,0 +1,7 @@
+islandora_gsearcher.admin:
+  path: '/admin/config/islandora/tools/gsearcher'
+  defaults:
+    _title: 'GSearcher'
+    _form: '\Drupal\islandora_gsearcher\Form\Admin'
+  requirements:
+    _permission: 'administer site configuration'

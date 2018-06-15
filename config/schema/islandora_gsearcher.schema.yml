@@ -1,0 +1,10 @@
+islandora_gsearcher.settings:
+  type: mapping
+  label: Settings
+  mapping:
+    islandora_gsearcher_gsearch_url:
+      type: string
+    islandora_gsearcher_gsearch_user:
+      type: string
+    islandora_gsearcher_gsearch_pass:
+      type: string
