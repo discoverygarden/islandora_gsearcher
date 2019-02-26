@@ -1,5 +1,5 @@
 islandora_gsearcher.settings:
-  type: mapping
+  type: config_object
   label: Settings
   mapping:
     islandora_gsearcher_gsearch_url:
