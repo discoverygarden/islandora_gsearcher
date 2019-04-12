@@ -2,16 +2,18 @@
 
 namespace Drupal\islandora_gsearcher\Form;
 
-use Drupal\Core\Form\ConfigFormBase;
+use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use GuzzleHttp\ClientInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use GuzzleHttp\Exception\GuzzleException;
+use Drupal\islandora\Utility\StateTrait;
 
 /**
  * Module settings form.
  */
-class Admin extends ConfigFormBase {
+class Admin extends FormBase {
+  use StateTrait;
 
   protected $httpClient;
 
@@ -43,21 +45,19 @@ class Admin extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
-    $config = $this->config('islandora_gsearcher.settings');
-
-    $config->set('islandora_gsearcher_gsearch_url', $form_state->getValue('islandora_gsearcher_gsearch_url'));
-    $config->set('islandora_gsearcher_gsearch_user', $form_state->getValue('islandora_gsearcher_gsearch_user'));
-    $config->set('islandora_gsearcher_gsearch_pass', $form_state->getValue('islandora_gsearcher_gsearch_pass'));
-
-    $config->save();
+  public static function stateDefaults() {
+    return [
+      'islandora_gsearcher_gsearch_url' => 'localhost:8080/fedoragsearch/rest',
+      'islandora_gsearcher_gsearch_user' => 'fedoraAdmin',
+      'islandora_gsearcher_gsearch_pass' => 'fedoraAdmin',
+    ];
   }
 
   /**
    * {@inheritdoc}
    */
-  protected function getEditableConfigNames() {
-    return ['islandora_gsearcher.settings'];
+  public function submitForm(array &$form, FormStateInterface $form_state) {
+    $this->stateSetAll($form_state);
   }
 
   /**
