@@ -8,6 +8,8 @@
 use Drupal\Core\Url;
 use GuzzleHttp\Exception\GuzzleException;
 
+use Drupal\islandora_gsearcher\Form\Admin as AdminForm;
+
 /**
  * Inform GSearch about changes to or the creation of an object.
  *
@@ -65,7 +67,6 @@ function islandora_gsearcher_inform_gsearch($pid = NULL, $send = FALSE, $purge =
  *   The operation to do.
  */
 function islandora_gsearcher_speak_to_gsearch($pid, $opp) {
-  $state = \Drupal::state();
   if ($opp == 'index') {
     $action = 'fromPid';
     $verb = 'index';
@@ -75,9 +76,9 @@ function islandora_gsearcher_speak_to_gsearch($pid, $opp) {
     $verb = 'purge';
   }
 
-  $password = $state->get('islandora_gsearcher_gsearch_pass');
-  $user = $state->get('islandora_gsearcher_gsearch_user');
-  $url = $state->get('islandora_gsearcher_gsearch_url');
+  $password = AdminForm::stateGet('islandora_gsearcher_gsearch_pass');
+  $user = AdminForm::stateGet('islandora_gsearcher_gsearch_user');
+  $url = AdminForm::stateGet('islandora_gsearcher_gsearch_url');
 
   $client = \Drupal::httpClient();
   $url_params = [
