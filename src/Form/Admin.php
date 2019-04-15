@@ -64,27 +64,26 @@ class Admin extends FormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
-    $config = $this->config('islandora_gsearcher.settings');
     $form['islandora_gsearcher_gsearch_url'] = [
       '#type' => 'textfield',
       '#required' => TRUE,
       '#title' => $this->t('GSearch Address'),
       '#description' => $this->t('Endpoint to use when communicating with GSearch.'),
-      '#default_value' => $config->get('islandora_gsearcher_gsearch_url'),
+      '#default_value' => static::stateGet('islandora_gsearcher_gsearch_url'),
     ];
     $form['islandora_gsearcher_gsearch_user'] = [
       '#type' => 'textfield',
       '#required' => TRUE,
       '#title' => $this->t('GSearch User'),
       '#description' => $this->t('User to use when communicating with GSearch.'),
-      '#default_value' => $config->get('islandora_gsearcher_gsearch_user'),
+      '#default_value' => static::stateGet('islandora_gsearcher_gsearch_user'),
     ];
     $form['islandora_gsearcher_gsearch_pass'] = [
       '#type' => 'textfield',
       '#required' => TRUE,
       '#title' => $this->t('GSearch Password'),
       '#description' => $this->t('Password to use when communicating with GSearch.'),
-      '#default_value' => $config->get('islandora_gsearcher_gsearch_pass'),
+      '#default_value' => static::stateGet('islandora_gsearcher_gsearch_pass'),
     ];
     $form['submit'] = [
       '#type' => 'submit',

@@ -65,7 +65,7 @@ function islandora_gsearcher_inform_gsearch($pid = NULL, $send = FALSE, $purge =
  *   The operation to do.
  */
 function islandora_gsearcher_speak_to_gsearch($pid, $opp) {
-  $config = \Drupal::config('islandora_gsearcher.settings');
+  $state = \Drupal::state();
   if ($opp == 'index') {
     $action = 'fromPid';
     $verb = 'index';
@@ -75,9 +75,9 @@ function islandora_gsearcher_speak_to_gsearch($pid, $opp) {
     $verb = 'purge';
   }
 
-  $password = $config->get('islandora_gsearcher_gsearch_pass');
-  $user = $config->get('islandora_gsearcher_gsearch_user');
-  $url = $config->get('islandora_gsearcher_gsearch_url');
+  $password = $state->get('islandora_gsearcher_gsearch_pass');
+  $user = $state->get('islandora_gsearcher_gsearch_user');
+  $url = $state->get('islandora_gsearcher_gsearch_url');
 
   $client = \Drupal::httpClient();
   $url_params = [
