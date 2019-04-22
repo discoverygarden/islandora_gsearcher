@@ -5,4 +5,4 @@ dependencies:
 core: 8.x
 configure: islandora_gsearcher.admin
 type: module
-php: '5.5.9'
+php: '7.2'
