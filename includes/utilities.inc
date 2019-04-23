@@ -7,8 +7,10 @@
 
 use Drupal\Core\Url;
 use GuzzleHttp\Exception\GuzzleException;
+use Psr\Http\Message\ResponseInterface;
 
 use Drupal\islandora_gsearcher\Form\Admin as AdminForm;
+use Drupal\islandora_solr\Form\AdminIndexSettings;
 
 /**
  * Inform GSearch about changes to or the creation of an object.
@@ -55,6 +57,8 @@ function islandora_gsearcher_inform_gsearch($pid = NULL, $send = FALSE, $purge =
     // Make sure we don't talk to GSearch more than necessary.
     $update_pids = [];
     $purge_pids = [];
+
+    islandora_gsearcher_commit_solr();
   }
 }
 
@@ -91,15 +95,63 @@ function islandora_gsearcher_speak_to_gsearch($pid, $opp) {
   $url = Url::fromUri("http://$user:$password@$url", $url_params);
   try {
     $response = $client->request('GET', $url->toString());
-    // Ping the logs in case of failure, GSearch will know more.
-    if ($response->getStatusCode() != 200) {
-      \Drupal::logger('Islandora GSearcher')->error('GSearch did not return 200 when asked to @verb @pid.', ['@verb' => $verb, '@pid' => $pid]);
-    }
   }
   catch (GuzzleException $exception) {
-    // Ping the logs in case of failure, GSearch will know more.
-    if ($exception->getResponse()->getStatusCode() != 200) {
-      \Drupal::logger('Islandora GSearcher')->error('GSearch did not return 200 when asked to @verb @pid.', ['@verb' => $verb, '@pid' => $pid]);
+    if ($exception->hasResponse()) {
+      $response = $exception->getResponse();
     }
+    else {
+      \Drupal::logger('Islandora GSearcher')->error('Encountered exception without a response.');
+    }
+  }
+  if (isset($response)) {
+    _islandora_gsearcher_check_response($response, 'GSearch did not return 200 when asked to @verb @pid.', ['@verb' => $verb, '@pid' => $pid]);
+  }
+}
+
+/**
+ * Have Solr make the indexed documents available to query.
+ */
+function islandora_gsearcher_commit_solr() {
+  module_load_include('inc', 'islandora_solr', 'includes/luke');
+  $url = islandora_solr_check_http(AdminIndexSettings::stateGet('islandora_solr_url'));
+  $client = \Drupal::httpClient();
+  $url_params = [
+    'query' => [
+      'stream.body' => '<commit softCommit="true"/>',
+    ],
+  ];
+  $url = Url::fromUri("$url/update", $url_params);
+  try {
+    $response = $client->request('GET', $url->toString());
+  }
+  catch (GuzzleException $exception) {
+    if ($exception->hasResponse()) {
+      $response = $exception->getResponse();
+    }
+    else {
+      \Drupal::logger('Islandora GSearcher')->error('Encountered exception without a response.');
+    }
+  }
+  if (isset($response)) {
+    _islandora_gsearcher_check_response($response, 'Solr did not return 200 when asked to commit.');
+  }
+}
+
+/**
+ * Helper; check the response and dump our message accordingly.
+ *
+ * @param Psr\Http\Message\ResponseInterface $response
+ *   The response to check.
+ * @param string $message
+ *   A message to output on error.
+ * @param array $subs
+ *   An optional array mapping placeholders onto values to substitute into the
+ *   message.
+ */
+function _islandora_gsearcher_check_response(ResponseInterface $response, $message, array $subs = []) {
+  if ($response->getStatusCode() != 200) {
+    // Ping the logs in case of failure, GSearch will know more.
+    \Drupal::logger('Islandora GSearcher')->error($message, $subs);
   }
 }
