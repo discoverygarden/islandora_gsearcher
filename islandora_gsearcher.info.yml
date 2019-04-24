@@ -2,6 +2,7 @@ name: 'Islandora GSearcher'
 description: 'Sends created and edited objects to be indexed via the Fedora Generic Search Service on page exit.'
 dependencies:
   - :islandora
+  - :islandora_solr
 core: 8.x
 configure: islandora_gsearcher.admin
 type: module
